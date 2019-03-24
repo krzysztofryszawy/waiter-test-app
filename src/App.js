@@ -24,13 +24,15 @@ class App extends Component {
         id: 1,
         status: 'pending',
         table: 12,
-        food: { tomatoSoup: 1, pancakes: 1, cola: 1 }
+        food: { tomatoSoup: 1, pancakes: 1, cola: 1 },
+        currentDate: "Sun Mar 23 2019 12:46:45"
       },
       {
         id: 2,
         status: 'new',
         table: 16,
-        food: { onionSoup: 2, dumplings: 2, fanta: 2 }
+        food: { onionSoup: 2, dumplings: 2, fanta: 2 },
+        currentDate: "Sun Mar 24 2019 22:58:33"
       }
     ],
     currentId: 2
@@ -67,33 +69,17 @@ class App extends Component {
         </Container>
         <Container>
           <Orders
-            cardTextColor="black"
-            condition={x => x.status !== 'finished'}
-            ordersList={this.state.ordersList}
-            editOrderFieldHandler={this.editOrderFieldHandler}
-          />
-        </Container>
-        <Container>
-          <Orders
+            // warning
+            // bold
             cardTextColor="white"
-            warning
-            condition={x => x.status !== 'finished'}
-            ordersList={this.state.ordersList}
-            editOrderFieldHandler={this.editOrderFieldHandler}
-          />
-        </Container>
-        <Container>
-          <Orders
-            cardTextColor="gray"
-            test
-            condition={x => x.status !== 'finished'}
+            condition={x => ((x.status !== 'finished') && (x.status !== 'cancelled'))}
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
           />
         </Container>
         <Container dark>
           <Orders
-            condition={x => x.status === 'finished'}
+            condition={x => ((x.status === 'finished') || (x.status === 'cancelled')) }
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
           />

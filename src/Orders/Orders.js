@@ -3,9 +3,9 @@ import styled, { css } from 'styled-components';
 
 const StyledOrders = styled.div`
   // color: palevioletred;
-  color: ${props => props.cardTextColor || 'palevioletred'}
-  background-color: rgba(0, 0, 0, 0.2);
-  margin: ${props => (props.status == 'ready' ? '.2' : '1rem')};
+  color: ${props => props.cardTextColor || 'palevioletred'};
+  background-color: rgba(0, 0, 0, .2);
+  margin: 1rem;
   padding: 1rem;
   border: 1px dashed gray;
   border-radius: 5px;
@@ -15,26 +15,45 @@ const StyledOrders = styled.div`
     ${props =>
       props.warning &&
       css`
-        background-color: rgba(200, 0, 0, 0.1);
+        font-size: 1.5rem;
+        color: red
       `}
     ${props =>
-      props.test &&
+      props.bold &&
       css`
-        background-color: rgba(0, 0, 200, 0.1);
+        font-weight: bold
+      `};
+    ${props =>
+      props.status === "cancelled" &&
+      css`
+        background-color: rgba(255, 0, 0, 0.2);
+      `};
+    ${props =>
+      props.status === "ready" &&
+      css`
+        background-color: rgba(0, 255, 0, 0.2);
+      `};
+    ${props =>
+      props.status === "pending" &&
+      css`
+        background-color: rgba(0, 0, 255, 0.1);
       `};
 `;
 
 class Orders extends Component {
   render() {
-    return this.props.ordersList.filter(this.props.condition).map(el => (
+    return this.props.ordersList
+      .filter(this.props.condition)
+      .reverse()
+      .map(el => (
       <StyledOrders
         cardTextColor={this.props.cardTextColor}
         warning={this.props.warning}
-        test={this.props.test}
+        bold={this.props.bold}
         status={el.status}
         key={el.id}
-      >
-        <div>ID: {el.id}</div>
+        >
+        <p>{el.currentDate && el.currentDate}</p>
         <label htmlFor="table">TABLE no.</label>
         <input
           name="table"

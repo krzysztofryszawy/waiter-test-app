@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
+import { timeout } from 'q';
 
 const StyledNewOrder = styled.div`
   color: orange;
@@ -15,16 +16,19 @@ class NewOrder extends Component {
     id: this.props.lastId+1,
     status: '',
     table: '',
-    food: { onionSoup: 2, dumplings: 2, fanta: 2 }
+    food: { onionSoup: 2, dumplings: 2, fanta: 2 },
+    currentDate: {}
   };
 
   changeState = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
-
+  
   sendData = () => {
-    this.props.addCurrentOrder(this.state);
-    this.setState({ id: +this.state.id + 1, status: '', table: '' });
+    const currentDate =  new Date()
+    this.setState({ currentDate: currentDate.toString().slice(0,24) }, () => this.props.addCurrentOrder(this.state));
+    
+    this.setState({ id: +this.state.id + 1, status: '', table: ''});
   };
 
   render() {
