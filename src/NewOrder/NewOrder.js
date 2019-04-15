@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import styled from 'styled-components';
-import { timeout } from 'q';
 
 const StyledNewOrder = styled.div`
   color: orange;
@@ -13,34 +12,36 @@ const StyledNewOrder = styled.div`
 
 class NewOrder extends Component {
   state = {
-    id: this.props.lastId+1,
-    status: '',
+    id: this.props.lastId + 1,
+    status: 'new',
     table: '',
     food: { onionSoup: 2, dumplings: 2, fanta: 2 },
-    currentDate: {}
+    currentDate: '',
+    editMode: false
   };
 
   changeState = e => {
     this.setState({ [e.target.name]: e.target.value });
   };
-  
+
   sendData = () => {
-    const currentDate =  new Date()
-    this.setState({ currentDate: currentDate.toString().slice(0,24) }, () => this.props.addCurrentOrder(this.state));
-    
-    this.setState({ id: +this.state.id + 1, status: '', table: ''});
+    const currentDate = new Date();
+    this.setState({ currentDate: currentDate.toString().slice(0, 24) }, () => {
+      this.props.addCurrentOrder(this.state);
+      this.setState({
+        id: +this.state.id + 1,
+        status: 'new',
+        table: '',
+        editMode: false
+      });
+    });
   };
 
   render() {
     return (
       <StyledNewOrder>
         <span>ID</span>
-        <input
-          value={this.state.id}
-          name="id"
-          type="text"
-          readOnly
-        />
+        <input value={this.state.id} name="id" type="text" readOnly />
         <span>STATUS </span>
         <select
           name="status"

@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import styled, { css } from 'styled-components';
 import Orders from './Orders/Orders';
 import NewOrder from './NewOrder/NewOrder';
+import Experimental from './Experimental/Experimental';
+import { iframeResizer } from 'iframe-resizer';
 
 const Container = styled.div`
   padding: 1rem;
@@ -25,26 +27,22 @@ class App extends Component {
         status: 'pending',
         table: 12,
         food: { tomatoSoup: 1, pancakes: 1, cola: 1 },
-        currentDate: "Sun Mar 23 2019 12:46:45"
+        currentDate: 'Sun Mar 23 2019 12:46:45',
+        editMode: false
       },
       {
         id: 2,
         status: 'new',
         table: 16,
         food: { onionSoup: 2, dumplings: 2, fanta: 2 },
-        currentDate: "Sun Mar 24 2019 22:58:33"
+        currentDate: 'Sun Mar 24 2019 22:58:33',
+        editMode: false
       }
     ],
     currentId: 2
-  }
-  ;
-
-  findLastId = () => {
-    // console.log(this.state.ordersList.map((x) => x.id).sort().reverse()[0]);
   };
 
   addCurrentOrder = data => {
-    // this.findLastId();
     let temporary = this.state.ordersList;
     temporary.push(data);
     this.setState({ ordersList: temporary, currentId: data.id });
@@ -52,14 +50,39 @@ class App extends Component {
 
   editOrderFieldHandler = (id, e) => {
     const temporaryOrderList = this.state.ordersList;
-    const index = temporaryOrderList.findIndex(x => x.id == id);
+    const index = temporaryOrderList.findIndex(x => x.id === id);
     temporaryOrderList[index][e.target.name] = e.target.value;
+    temporaryOrderList[index].editMode = false;
+    if (
+      temporaryOrderList[index].status === 'cancelled' ||
+      temporaryOrderList[index].status === 'finished'
+    ) {
+      temporaryOrderList[index].editMode = false;
+    }
+    this.setState({ ordersList: temporaryOrderList });
+  };
+
+  editModeHandler = (id, e) => {
+    const temporaryOrderList = this.state.ordersList;
+    const index = temporaryOrderList.findIndex(x => x.id === id);
+    temporaryOrderList[index].editMode = !temporaryOrderList[index].editMode;
     this.setState({ ordersList: temporaryOrderList });
   };
 
   render() {
+    // iframeResizer({
+    //   log: true,
+    //   initCallback: () => {
+    //     console.log('ready!');
+    //   },
+    //   resizedCallback: () => {
+    //     console.log('resized!');
+    //   }
+    // });
+
     return (
       <React.Fragment>
+        <Experimental />
         <Container>
           <NewOrder
             lastId={this.state.currentId}
@@ -72,14 +95,15 @@ class App extends Component {
             // warning
             // bold
             cardTextColor="white"
-            condition={x => ((x.status !== 'finished') && (x.status !== 'cancelled'))}
+            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
+            editModeHandler={this.editModeHandler}
           />
         </Container>
         <Container dark>
           <Orders
-            condition={x => ((x.status === 'finished') || (x.status === 'cancelled')) }
+            condition={x => x.status === 'finished' || x.status === 'cancelled'}
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
           />
