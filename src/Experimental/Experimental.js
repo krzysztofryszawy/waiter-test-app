@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 
 function Experimental() {
-  const [count, setCount] = useState({ licznik: 0 });
+  const [count, setCount] = useState({ licznik: 0, other: 'initial' });
   const [age, setAge] = useState(42);
   const [fruit, setFruit] = useState('banana');
   const [todos, setTodos] = useState([{ text: 'Learn Hooks' }]);
@@ -13,10 +13,13 @@ function Experimental() {
       document.title = `Naciśnięto ${count.licznik} razy`;
   });
 
+  console.log('TCL: Experimental -> count', count);
   return (
     <h1>
       <p>Naciśnięto {count.licznik} razy</p>
-      <button onClick={() => setCount({ licznik: count.licznik + 1 })}>
+      <button
+        onClick={() => setCount({ ...count, licznik: count.licznik + 1 })}
+      >
         Naciśnij mnie
       </button>
       <p>Age {age} </p>

@@ -3,6 +3,7 @@ import styled, { css } from 'styled-components';
 import Orders from './Orders/Orders';
 import NewOrder from './NewOrder/NewOrder';
 import Experimental from './Experimental/Experimental';
+import ViewHandler from './ViewHandler/ViewHandler';
 import { iframeResizer } from 'iframe-resizer';
 
 const Container = styled.div`
@@ -39,7 +40,8 @@ class App extends Component {
         editMode: false
       }
     ],
-    currentId: 2
+    currentId: 2,
+    viewType: 'waiterView'
   };
 
   addCurrentOrder = data => {
@@ -69,20 +71,14 @@ class App extends Component {
     this.setState({ ordersList: temporaryOrderList });
   };
 
-  render() {
-    // iframeResizer({
-    //   log: true,
-    //   initCallback: () => {
-    //     console.log('ready!');
-    //   },
-    //   resizedCallback: () => {
-    //     console.log('resized!');
-    //   }
-    // });
+  viewTypeHandler = e => {
+    this.setState({ viewType: e.target.value });
+  };
 
+  managerView() {
     return (
       <React.Fragment>
-        <Experimental />
+        {/* <Experimental /> */}
         <Container>
           <NewOrder
             lastId={this.state.currentId}
@@ -109,6 +105,70 @@ class App extends Component {
           />
         </Container>
       </React.Fragment>
+    );
+  }
+  waiterView() {
+    return (
+      <React.Fragment>
+        {/* <Experimental /> */}
+        <Container>
+          <NewOrder
+            lastId={this.state.currentId}
+            changeState={this.changeState}
+            addCurrentOrder={this.addCurrentOrder}
+          />
+        </Container>
+        <Container>
+          <Orders
+            // warning
+            // bold
+            cardTextColor="white"
+            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
+            ordersList={this.state.ordersList}
+            editOrderFieldHandler={this.editOrderFieldHandler}
+            editModeHandler={this.editModeHandler}
+          />
+        </Container>
+      </React.Fragment>
+    );
+  }
+
+  cookView() {
+    return (
+      <React.Fragment>
+        <Container>
+          <Orders
+            // warning
+            // bold
+            cardTextColor="white"
+            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
+            ordersList={this.state.ordersList}
+            editOrderFieldHandler={this.editOrderFieldHandler}
+            editModeHandler={this.editModeHandler}
+          />
+        </Container>
+      </React.Fragment>
+    );
+  }
+
+  render() {
+    // iframeResizer({
+    //   log: true,
+    //   initCallback: () => {
+    //     console.log('ready!');
+    //   },
+    //   resizedCallback: () => {
+    //     console.log('resized!');
+    //   }
+    // });
+
+    return (
+      <div>
+        <ViewHandler viewTypeHandler={this.viewTypeHandler} />
+        {this.state.viewType === 'managerView' && this.managerView()}
+        {this.state.viewType === 'cookView' && this.cookView()}
+        {this.state.viewType === 'waiterView' && this.waiterView()}
+      </div>
     );
   }
 }
