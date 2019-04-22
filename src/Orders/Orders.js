@@ -87,6 +87,18 @@ class Orders extends Component {
           ) : (
             <div>{el.status}</div>
           )}
+
+          <ul>
+            {this.props.ordersFood.map(
+              item =>
+                item.orderId == el.id && (
+                  <li>
+                    {item.name}: {item.quantity}
+                  </li>
+                )
+            )}
+          </ul>
+          <button onClick={() => this.props.openModal(el.id)}>MODAL</button>
         </StyledOrders>
       ));
   }

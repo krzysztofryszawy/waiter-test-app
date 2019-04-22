@@ -5,6 +5,7 @@ import NewOrder from './NewOrder/NewOrder';
 import Experimental from './Experimental/Experimental';
 import ViewHandler from './ViewHandler/ViewHandler';
 import { iframeResizer } from 'iframe-resizer';
+import ModalView from './ModalView/ModalView';
 
 const Container = styled.div`
   padding: 1rem;
@@ -27,7 +28,10 @@ class App extends Component {
         id: 1,
         status: 'pending',
         table: 12,
-        food: { tomatoSoup: 1, pancakes: 1, cola: 1 },
+        food: [
+          { foodId: 0, name: 'tomatoSoup', quantity: 14 },
+          { foodId: 1, name: 'pancakes', quantity: 14 }
+        ],
         currentDate: 'Sun Mar 23 2019 12:46:45',
         editMode: false
       },
@@ -35,13 +39,31 @@ class App extends Component {
         id: 2,
         status: 'new',
         table: 16,
-        food: { onionSoup: 2, dumplings: 2, fanta: 2 },
+        food: [
+          { foodId: 2, name: 'cola', quantity: 17 },
+          { foodId: 3, name: 'onionSoup', quantity: 17 }
+        ],
         currentDate: 'Sun Mar 24 2019 22:58:33',
         editMode: false
       }
     ],
+    ordersFood: [
+      { orderId: 1, foodId: 0, name: 'tomatoSoup', quantity: 14 },
+      { orderId: 1, foodId: 1, name: 'pancakes', quantity: 14 },
+      { orderId: 2, foodId: 2, name: 'cola', quantity: 17 },
+      { orderId: 2, foodId: 3, name: 'onionSoup', quantity: 17 }
+    ],
     currentId: 2,
-    viewType: 'waiterView'
+    viewType: 'waiterView',
+    currentModalId: '',
+    foodOptions: [
+      { foodId: 0, name: 'tomatoSoup' },
+      { foodId: 1, name: 'pancakes' },
+      { foodId: 2, name: 'cola' },
+      { foodId: 3, name: 'onionSoup' },
+      { foodId: 4, name: 'dumplings' },
+      { foodId: 5, name: 'fanta' }
+    ]
   };
 
   addCurrentOrder = data => {
@@ -75,6 +97,81 @@ class App extends Component {
     this.setState({ viewType: e.target.value });
   };
 
+  openModal = id => {
+    this.setState({ viewType: 'modalView', currentModalId: id });
+  };
+  closeModal = id => {
+    this.setState({ viewType: 'waiterView', currentModalId: '' });
+  };
+
+  incraseFood = foodId => {
+    const objectToModify = this.state.ordersList.find(
+      obj => obj.id == this.state.currentModalId
+    );
+
+    const temporaryOrderList = this.state.ordersList;
+
+    const temporary = temporaryOrderList
+      .find(obj => obj.id == objectToModify.id)
+      .food.find(el => el.foodId == foodId);
+
+    console.log(objectToModify);
+
+    temporary.quantity += 1;
+
+    console.log(objectToModify);
+
+    // this.setState({...this.state, property: {nestedProperty: "new value"}})
+
+    // this.setState({ ordersList: temporaryOrderList });
+  };
+
+  waiterView() {
+    return (
+      <React.Fragment>
+        {/* <Experimental /> */}
+        <Container>
+          <NewOrder
+            lastId={this.state.currentId}
+            changeState={this.changeState}
+            addCurrentOrder={this.addCurrentOrder}
+          />
+        </Container>
+        <Container>
+          <Orders
+            // warning
+            // bold
+            cardTextColor="white"
+            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
+            ordersList={this.state.ordersList}
+            editOrderFieldHandler={this.editOrderFieldHandler}
+            editModeHandler={this.editModeHandler}
+            openModal={this.openModal}
+            ordersFood={this.state.ordersFood}
+          />
+        </Container>
+      </React.Fragment>
+    );
+  }
+
+  cookView() {
+    return (
+      <React.Fragment>
+        <Container>
+          <Orders
+            // warning
+            // bold
+            cardTextColor="white"
+            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
+            ordersList={this.state.ordersList}
+            editOrderFieldHandler={this.editOrderFieldHandler}
+            editModeHandler={this.editModeHandler}
+          />
+        </Container>
+      </React.Fragment>
+    );
+  }
+
   managerView() {
     return (
       <React.Fragment>
@@ -107,49 +204,6 @@ class App extends Component {
       </React.Fragment>
     );
   }
-  waiterView() {
-    return (
-      <React.Fragment>
-        {/* <Experimental /> */}
-        <Container>
-          <NewOrder
-            lastId={this.state.currentId}
-            changeState={this.changeState}
-            addCurrentOrder={this.addCurrentOrder}
-          />
-        </Container>
-        <Container>
-          <Orders
-            // warning
-            // bold
-            cardTextColor="white"
-            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
-            ordersList={this.state.ordersList}
-            editOrderFieldHandler={this.editOrderFieldHandler}
-            editModeHandler={this.editModeHandler}
-          />
-        </Container>
-      </React.Fragment>
-    );
-  }
-
-  cookView() {
-    return (
-      <React.Fragment>
-        <Container>
-          <Orders
-            // warning
-            // bold
-            cardTextColor="white"
-            condition={x => x.status !== 'finished' && x.status !== 'cancelled'}
-            ordersList={this.state.ordersList}
-            editOrderFieldHandler={this.editOrderFieldHandler}
-            editModeHandler={this.editModeHandler}
-          />
-        </Container>
-      </React.Fragment>
-    );
-  }
 
   render() {
     // iframeResizer({
@@ -164,10 +218,22 @@ class App extends Component {
 
     return (
       <div>
-        <ViewHandler viewTypeHandler={this.viewTypeHandler} />
+        {this.state.viewType !== 'modalView' && (
+          <ViewHandler viewTypeHandler={this.viewTypeHandler} />
+        )}
         {this.state.viewType === 'managerView' && this.managerView()}
         {this.state.viewType === 'cookView' && this.cookView()}
         {this.state.viewType === 'waiterView' && this.waiterView()}
+        {this.state.viewType === 'modalView' && (
+          <ModalView
+            foodOptions={this.state.foodOptions}
+            closeModal={this.closeModal}
+            ordersList={this.state.ordersList}
+            currentModalId={this.state.currentModalId}
+            incraseFood={this.incraseFood}
+            ordersFood={this.state.ordersFood}
+          />
+        )}
       </div>
     );
   }

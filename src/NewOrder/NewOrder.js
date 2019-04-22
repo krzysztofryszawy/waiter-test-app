@@ -15,7 +15,7 @@ class NewOrder extends Component {
     id: this.props.lastId + 1,
     status: 'new',
     table: '',
-    food: { onionSoup: 2, dumplings: 2, fanta: 2 },
+    food: [{ onionSoup: 5 }, { dumplings: 5 }, { fanta: 5 }],
     currentDate: '',
     editMode: false
   };
