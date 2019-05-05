@@ -41,21 +41,34 @@ const StyledOrders = styled.div`
 `;
 class Orders extends Component {
   render() {
-    return this.props.ordersList
-      .filter(this.props.condition)
+    // Destructuring Props
+    const {
+      ordersList,
+      condition,
+      cardTextColor,
+      warning,
+      bold,
+      status,
+      id,
+      editModeHandler,
+      editOrderFieldHandler,
+      ordersFood,
+      openModal
+    } = this.props;
+
+    return ordersList
+      .filter(condition)
       .reverse()
       .map(el => (
         <StyledOrders
-          cardTextColor={this.props.cardTextColor}
-          warning={this.props.warning}
-          bold={this.props.bold}
+          cardTextColor={cardTextColor}
+          warning={warning}
+          bold={bold}
           status={el.status}
           key={el.id}
         >
           {el.status !== 'finished' && el.status !== 'cancelled' && (
-            <button onClick={e => this.props.editModeHandler(el.id, e)}>
-              EDIT
-            </button>
+            <button onClick={e => editModeHandler(el.id, e)}>EDIT</button>
           )}
           <p>{el.currentDate && el.currentDate}</p>
           <label htmlFor="table">TABLE no.</label>
@@ -64,7 +77,7 @@ class Orders extends Component {
               name="table"
               id="table"
               value={el.table}
-              onChange={e => this.props.editOrderFieldHandler(el.id, e)}
+              onChange={e => editOrderFieldHandler(el.id, e)}
             />
           ) : (
             <div>{el.table}</div>
@@ -73,10 +86,11 @@ class Orders extends Component {
           <label htmlFor="status">STATUS</label>
           {el.editMode ? (
             <select
+              key={el.id}
               name="status"
               id="status"
               value={el.status}
-              onChange={e => this.props.editOrderFieldHandler(el.id, e)}
+              onChange={e => editOrderFieldHandler(el.id, e)}
             >
               <option value="new">NEW</option>
               <option value="pending">PENDING</option>
@@ -89,16 +103,16 @@ class Orders extends Component {
           )}
 
           <ul>
-            {this.props.ordersFood.map(
+            {ordersFood.map(
               item =>
                 item.orderId == el.id && (
-                  <li>
+                  <li key={item.foodId}>
                     {item.name}: {item.quantity}
                   </li>
                 )
             )}
           </ul>
-          <button onClick={() => this.props.openModal(el.id)}>MODAL</button>
+          <button onClick={() => openModal(el.id)}>MODAL</button>
         </StyledOrders>
       ));
   }

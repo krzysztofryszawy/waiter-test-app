@@ -28,10 +28,6 @@ class App extends Component {
         id: 1,
         status: 'pending',
         table: 12,
-        food: [
-          { foodId: 0, name: 'tomatoSoup', quantity: 14 },
-          { foodId: 1, name: 'pancakes', quantity: 14 }
-        ],
         currentDate: 'Sun Mar 23 2019 12:46:45',
         editMode: false
       },
@@ -39,10 +35,6 @@ class App extends Component {
         id: 2,
         status: 'new',
         table: 16,
-        food: [
-          { foodId: 2, name: 'cola', quantity: 17 },
-          { foodId: 3, name: 'onionSoup', quantity: 17 }
-        ],
         currentDate: 'Sun Mar 24 2019 22:58:33',
         editMode: false
       }
@@ -51,7 +43,8 @@ class App extends Component {
       { orderId: 1, foodId: 0, name: 'tomatoSoup', quantity: 14 },
       { orderId: 1, foodId: 1, name: 'pancakes', quantity: 14 },
       { orderId: 2, foodId: 2, name: 'cola', quantity: 17 },
-      { orderId: 2, foodId: 3, name: 'onionSoup', quantity: 17 }
+      { orderId: 2, foodId: 3, name: 'onionSoup', quantity: 17 },
+      { orderId: 1, foodId: 3, name: 'onionSoup', quantity: 3 }
     ],
     currentId: 2,
     viewType: 'waiterView',
@@ -100,30 +93,45 @@ class App extends Component {
   openModal = id => {
     this.setState({ viewType: 'modalView', currentModalId: id });
   };
-  closeModal = id => {
+  closeModal = () => {
     this.setState({ viewType: 'waiterView', currentModalId: '' });
   };
 
+  // incraseFood = foodId => {
+  //   const objectToModify = this.state.ordersList.find(
+  //     obj => obj.id == this.state.currentModalId
+  //   );
+
+  //   const temporaryOrderList = this.state.ordersList;
+
+  //   const temporary = temporaryOrderList
+  //     .find(obj => obj.id == objectToModify.id)
+  //     .food.find(el => el.foodId == foodId);
+
+  //   console.log(objectToModify);
+
+  //   temporary.quantity += 1;
+
+  //   console.log(objectToModify);
+
+  //   // this.setState({...this.state, property: {nestedProperty: "new value"}})
+
+  //   // this.setState({ ordersList: temporaryOrderList });
+  // };
+
   incraseFood = foodId => {
-    const objectToModify = this.state.ordersList.find(
-      obj => obj.id == this.state.currentModalId
-    );
-
-    const temporaryOrderList = this.state.ordersList;
-
-    const temporary = temporaryOrderList
-      .find(obj => obj.id == objectToModify.id)
-      .food.find(el => el.foodId == foodId);
-
-    console.log(objectToModify);
-
-    temporary.quantity += 1;
-
-    console.log(objectToModify);
-
-    // this.setState({...this.state, property: {nestedProperty: "new value"}})
-
-    // this.setState({ ordersList: temporaryOrderList });
+    this.setState(prevState => {
+      const index = prevState.ordersFood.findIndex(
+        el => el.orderId === this.state.currentModalId && el.foodId === foodId
+      );
+      let objects = [...prevState.ordersFood];
+      const objectToChange = objects[index];
+      objectToChange.quantity = 666;
+      return {
+        ...prevState.ordersFood,
+        [prevState.ordersFood[index]]: objectToChange
+      };
+    });
   };
 
   waiterView() {
@@ -166,6 +174,8 @@ class App extends Component {
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
             editModeHandler={this.editModeHandler}
+            openModal={this.openModal}
+            ordersFood={this.state.ordersFood}
           />
         </Container>
       </React.Fragment>
@@ -192,6 +202,8 @@ class App extends Component {
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
             editModeHandler={this.editModeHandler}
+            openModal={this.openModal}
+            ordersFood={this.state.ordersFood}
           />
         </Container>
         <Container dark>
