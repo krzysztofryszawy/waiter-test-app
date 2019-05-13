@@ -27,7 +27,7 @@ const ModalView = props => {
             {props.ordersFood.map(
               obj =>
                 obj.orderId == props.currentModalId && (
-                  <p>
+                  <p key={obj.foodId}>
                     {obj.name}:{obj.quantity}
                   </p>
                 )

@@ -97,40 +97,29 @@ class App extends Component {
     this.setState({ viewType: 'waiterView', currentModalId: '' });
   };
 
-  // incraseFood = foodId => {
-  //   const objectToModify = this.state.ordersList.find(
-  //     obj => obj.id == this.state.currentModalId
-  //   );
-
-  //   const temporaryOrderList = this.state.ordersList;
-
-  //   const temporary = temporaryOrderList
-  //     .find(obj => obj.id == objectToModify.id)
-  //     .food.find(el => el.foodId == foodId);
-
-  //   console.log(objectToModify);
-
-  //   temporary.quantity += 1;
-
-  //   console.log(objectToModify);
-
-  //   // this.setState({...this.state, property: {nestedProperty: "new value"}})
-
-  //   // this.setState({ ordersList: temporaryOrderList });
-  // };
-
   incraseFood = foodId => {
     this.setState(prevState => {
       const index = prevState.ordersFood.findIndex(
         el => el.orderId === this.state.currentModalId && el.foodId === foodId
       );
-      let objects = [...prevState.ordersFood];
-      const objectToChange = objects[index];
-      objectToChange.quantity = 666;
-      return {
-        ...prevState.ordersFood,
-        [prevState.ordersFood[index]]: objectToChange
-      };
+
+      if (index !== -1) {
+        let objectToChange = prevState.ordersFood.map(el => {
+          return el.foodId === foodId
+            ? {
+                orderId: el.orderId,
+                foodId: el.foodId,
+                name: el.name,
+                quantity: el.quantity + 1
+              }
+            : el;
+        });
+
+        return { ...prevState, ordersFood: objectToChange };
+      } else {
+        // let objects = [...prevState, prevState.ordersFood];
+        // return { ...prevState, objects };
+      }
     });
   };
 
