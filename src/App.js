@@ -97,7 +97,7 @@ class App extends Component {
     this.setState({ viewType: 'waiterView', currentModalId: '' });
   };
 
-  incraseFood = foodId => {
+  incraseFood = (foodId, name) => {
     this.setState(prevState => {
       const index = prevState.ordersFood.findIndex(
         el => el.orderId === this.state.currentModalId && el.foodId === foodId
@@ -105,20 +105,32 @@ class App extends Component {
 
       if (index !== -1) {
         let objectToChange = prevState.ordersFood.map(el => {
-          return el.foodId === foodId
-            ? {
-                orderId: el.orderId,
-                foodId: el.foodId,
-                name: el.name,
-                quantity: el.quantity + 1
-              }
-            : el;
+          if (el.foodId === foodId && el.orderId === this.state.currentModalId)
+            return {
+              orderId: el.orderId,
+              foodId: el.foodId,
+              name: el.name,
+              quantity: el.quantity + 1
+            };
+          else return el;
         });
 
+        // console.log('TCL: App -> incraseFood -> prevState', prevState);
         return { ...prevState, ordersFood: objectToChange };
       } else {
-        // let objects = [...prevState, prevState.ordersFood];
-        // return { ...prevState, objects };
+        let objectToChange = prevState.ordersFood.map(el => {
+          if (el.foodId === foodId)
+            return {
+              orderId: this.state.currentModalId,
+              foodId: foodId,
+              name: name,
+              quantity: 1
+            };
+          else return el;
+        });
+
+        // console.log('TCL: App -> objectToChange', objectToChange);
+        return { ...prevState, ordersFood: objectToChange };
       }
     });
   };

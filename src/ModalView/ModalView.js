@@ -14,10 +14,14 @@ const ModalView = props => {
           {props.foodOptions.map(el => (
             <div key={el.foodId}>
               {/* to change to decrase */}
-              <button onClick={() => props.incraseFood(el.foodId)}>-</button>
+              <button onClick={() => props.incraseFood(el.foodId, el.name)}>
+                -
+              </button>
               {el.name}
               {el.foodId}
-              <button onClick={() => props.incraseFood(el.foodId)}>+</button>
+              <button onClick={() => props.incraseFood(el.foodId, el.name)}>
+                +
+              </button>
             </div>
           ))}
         </div>
