@@ -115,22 +115,18 @@ class App extends Component {
           else return el;
         });
 
-        // console.log('TCL: App -> incraseFood -> prevState', prevState);
         return { ...prevState, ordersFood: objectToChange };
       } else {
-        let objectToChange = prevState.ordersFood.map(el => {
-          if (el.foodId === foodId)
-            return {
-              orderId: this.state.currentModalId,
-              foodId: foodId,
-              name: name,
-              quantity: 1
-            };
-          else return el;
-        });
+        let newObjectToAdd = prevState.foodOptions.find(
+          el => el.foodId === foodId
+        );
+        newObjectToAdd.orderId = this.state.currentModalId;
+        newObjectToAdd.quantity = 1;
 
-        // console.log('TCL: App -> objectToChange', objectToChange);
-        return { ...prevState, ordersFood: objectToChange };
+        return {
+          ...prevState,
+          ordersFood: [...prevState.ordersFood, newObjectToAdd]
+        };
       }
     });
   };
