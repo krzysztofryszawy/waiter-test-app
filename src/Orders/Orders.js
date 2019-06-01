@@ -53,7 +53,8 @@ class Orders extends Component {
       editModeHandler,
       editOrderFieldHandler,
       ordersFood,
-      openModal
+      openModal,
+      viewType
     } = this.props;
 
     return ordersList
@@ -112,7 +113,9 @@ class Orders extends Component {
                 )
             )}
           </ul>
-          <button onClick={() => openModal(el.id)}>MODAL</button>
+          {viewType === 'managerView' || (
+            <button onClick={() => openModal(el.id)}>MODAL</button>
+          )}
         </StyledOrders>
       ));
   }

@@ -6,6 +6,7 @@ import Experimental from './Experimental/Experimental';
 import ViewHandler from './ViewHandler/ViewHandler';
 import { iframeResizer } from 'iframe-resizer';
 import ModalView from './ModalView/ModalView';
+import axios from './axios-instance';
 
 const Container = styled.div`
   padding: 1rem;
@@ -22,6 +23,10 @@ const Container = styled.div`
 `;
 
 class App extends Component {
+  componentDidMount() {
+    this.getSomething();
+  }
+
   state = {
     ordersList: [
       {
@@ -56,7 +61,31 @@ class App extends Component {
       { foodId: 3, name: 'onionSoup' },
       { foodId: 4, name: 'dumplings' },
       { foodId: 5, name: 'fanta' }
-    ]
+    ],
+    something: []
+  };
+
+  getSomething() {
+    axios
+      .get('/something.json')
+      .then(response => {
+        console.log(response);
+        this.setState({ something: response.data });
+      })
+      .catch(error => {
+        console.log(error);
+      });
+  }
+
+  saveSomething = () => {
+    axios
+      .put('/something.json', this.state.foodOptions)
+      .then(response => {
+        console.log(response);
+      })
+      .catch(error => {
+        console.log(error);
+      });
   };
 
   addCurrentOrder = data => {
@@ -115,6 +144,7 @@ class App extends Component {
           else return el;
         });
 
+        console.log('znaleziony obiekt', objectToChange);
         return { ...prevState, ordersFood: objectToChange };
       } else {
         let newObjectToAdd = prevState.foodOptions.find(
@@ -123,6 +153,7 @@ class App extends Component {
         newObjectToAdd.orderId = this.state.currentModalId;
         newObjectToAdd.quantity = 1;
 
+        console.log('brak obiektu', newObjectToAdd);
         return {
           ...prevState,
           ordersFood: [...prevState.ordersFood, newObjectToAdd]
@@ -208,6 +239,8 @@ class App extends Component {
             condition={x => x.status === 'finished' || x.status === 'cancelled'}
             ordersList={this.state.ordersList}
             editOrderFieldHandler={this.editOrderFieldHandler}
+            ordersFood={this.state.ordersFood}
+            viewType={this.state.viewType}
           />
         </Container>
       </React.Fragment>
@@ -230,6 +263,17 @@ class App extends Component {
         {this.state.viewType !== 'modalView' && (
           <ViewHandler viewTypeHandler={this.viewTypeHandler} />
         )}
+        <button onClick={this.saveSomething}>save data</button>
+        <button onClick={this.getSomething}>load data</button>
+
+        <div>
+          {this.state.something.map(el => {
+            if (el) {
+              return <div key={el.foodId}>{el.name}</div>;
+            }
+          })}
+        </div>
+
         {this.state.viewType === 'managerView' && this.managerView()}
         {this.state.viewType === 'cookView' && this.cookView()}
         {this.state.viewType === 'waiterView' && this.waiterView()}
